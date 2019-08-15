@@ -214,8 +214,10 @@ class Taxonomy extends Component {
 
     if(!assignedTaxo){
       var target = document.querySelector(`#${this.props.outputFieldId}`);
-      assignedTaxo = JSON.parse(target.innerHTML);
-      this.setState({assignedTaxo: assignedTaxo});
+      try {
+        assignedTaxo = JSON.parse(target.innerHTML);
+        this.setState({assignedTaxo: assignedTaxo});
+      } catch (e) {}
     }
   }
 
