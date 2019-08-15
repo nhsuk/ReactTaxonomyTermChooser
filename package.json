@@ -2,17 +2,35 @@
   "name": "dct.taxonomy-jss",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
+  "main": "dist/react-taxonomy.cjs.js",
+  "module": "dist/react-taxonomy.esm.js",
+  "peerDependencies": {
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
+    "react-jss": "^8.6.1"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6",
     "react-dom": "^16.8.6",
-    "react-jss": "^8.6.1",
     "react-scripts": "3.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-proposal-decorators": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-react": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "element-closest": "^3.0.1",
+    "rollup-plugin-babel": "^4.3.1",
+    "rollup": "^1.1.0",
+    "webpack-bundle-analyzer": "^3.0.3"
   },
   "homepage": ".",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && rm -rf dist && cp -R build/static/js/ dist && find ./dist -type f ! -name 'main.*' -delete;",
+    "build": "rollup -c",
+    "build-local": "react-scripts build && rm -rf dist && cp -R build/static/js/ dist && find ./dist -type f ! -name 'main.*' -delete;",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -29,6 +47,31 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
+    ]
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "modules": false
+        }
+      ],
+      "@babel/preset-react"
+    ],
+    "plugins": [
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
     ]
   }
 }
