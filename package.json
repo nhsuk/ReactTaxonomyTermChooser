@@ -9,7 +9,7 @@
     "react-jss": "^8.6.1",
     "react-scripts": "3.0.1"
   },
-  "homepage" : ".",
+  "homepage": ".",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build && rm -rf dist && cp -R build/static/js/ dist && find ./dist -type f ! -name 'main.*' -delete;",
