@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 const styles = (theme) => ({
   root: {
-    '& .term':{
+    '& .term': {
       margin: '5px 0',
     },
     '& .accordion': {
@@ -19,7 +19,7 @@ const styles = (theme) => ({
       fontSize: '15px',
       transition: '0.4s',
       boxSizing: 'border-box',
-      '& small':{
+      '& small': {
         display: 'block',
         marginLeft: '14px',
       },
@@ -31,15 +31,15 @@ const styles = (theme) => ({
         marginRight: '5px',
       },
       '&:hover': {
-          backgroundColor: '#ccc',
+        backgroundColor: '#ccc',
       },
 
       '&.active': {
-          backgroundColor: '#ccc',
+        backgroundColor: '#ccc',
 
-          '&:before': {
-            content: '"‒"',
-          },
+        '&:before': {
+          content: '"‒"',
+        },
       },
     },
 
@@ -49,8 +49,8 @@ const styles = (theme) => ({
       color: '#000',
       backgroundColor: '#ddd',
       overflow: 'hidden',
-      '& .term':{
-        '& .panel':{
+      '& .term': {
+        '& .panel': {
           display: 'block'
         }
       },
@@ -59,15 +59,15 @@ const styles = (theme) => ({
         backgroundColor: 'transparent',
         marginLeft: '-13px',
         '&:hover': {
-            backgroundColor: 'transparent',
+          backgroundColor: 'transparent',
         },
         '&.active': {
-            backgroundColor: 'transparent',
+          backgroundColor: 'transparent',
         },
       }
     }
   },
-  tags:{
+  tags: {
     '& li': {
       display: 'inline-block',
       margin: '5px 2px',
@@ -80,7 +80,7 @@ const styles = (theme) => ({
       border: 'solid thin #333',
       verticalAlign: 'middle',
       position: 'relative',
-      '& span':{
+      '& span': {
         position: 'absolute',
         top: 0,
         right: 0,
@@ -97,7 +97,7 @@ const styles = (theme) => ({
 
 class Taxonomy extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.ref = React.createRef();
 
@@ -124,11 +124,11 @@ class Taxonomy extends Component {
     assignedDisplayText: PropTypes.string,
   };
 
-  parseTerms = (taxoTerms) =>{
+  parseTerms = (taxoTerms) => {
 
     var assignedTaxo = this.state.assignedTaxo;
     let taxo = [];
-    for(let i=0; i<taxoTerms.length; i++){
+    for (let i = 0; i < taxoTerms.length; i++) {
 
       let value = taxoTerms[i];
       let terms = [];
@@ -139,39 +139,39 @@ class Taxonomy extends Component {
         name: value['label'],
         onChange: (e) => this.handlechecked(e)
       }
-      if(assignedTaxo){
-        for(let a=0; a<assignedTaxo.length; a++){
-          if( assignedTaxo[a]['code'] == value['code']){
+      if (assignedTaxo) {
+        for (let a = 0; a < assignedTaxo.length; a++) {
+          if (assignedTaxo[a]['code'] == value['code']) {
             attr['checked'] = true;
           }
         }
       }
 
-      if( Array.isArray(value['children']) && value['children'].length > 0 ){
+      if (Array.isArray(value['children']) && value['children'].length > 0) {
 
         var item = [], clss = 'accordion';
-        if(value['type']=='volcabulary'){
+        if (value['type'] == 'volcabulary') {
           item.push(<strong>{value['label']}</strong>);
           item.push(<small>{value['description']}</small>);
-        }else{
+        } else {
           item.push(<input {...attr} />);
           item.push(<label>{value['label']}</label>);
           clss += ' active';
         }
         terms.push(
           <div key={i} className="term">
-            <div className={clss} onClick={(e)=>(this.handleAccordion(e))}>{item}</div>
+            <div className={clss} onClick={(e) => (this.handleAccordion(e))}>{item}</div>
             <div className="panel">
               {this.parseTerms(value['children'])}
             </div>
           </div>
         );
       }
-      else{
+      else {
         terms.push(
           <div key={i} className="term">
-              <input {...attr} />
-              <label>{value['label']}</label>
+            <input {...attr} />
+            <label>{value['label']}</label>
           </div>
         )
       }
@@ -182,17 +182,19 @@ class Taxonomy extends Component {
   }
 
   handlechecked = (e) => {
+    const checkboxElem = e.currentTarget;
+    var selectedTerms = this.state.assignedTaxo;
+    if (checkboxElem.checked) {
+      selectedTerms = [ ...selectedTerms, { code: checkboxElem.getAttribute('value'), label: checkboxElem.getAttribute('name') }];
+    } else {
+      selectedTerms = selectedTerms.filter((item) => (item.code !== checkboxElem.getAttribute('value')));
+    }
 
-    var selected = this.state.assignedTaxo;
-    selected.push({
-      code: e.currentTarget.getAttribute('value'),
-      label: e.currentTarget.getAttribute('name')
-    });
-
-    this.setState({assignedTaxo: selected});
-    var target = document.querySelector(`#${this.props.outputFieldId}`);
-    if(target){
-      target.innerHTML = JSON.stringify(selected);
+    this.setState({ assignedTaxo: selectedTerms });
+    // var target = document.querySelector(`#${this.props.outputFieldId}`);
+    var target = document.getElementById(this.props.outputFieldId);
+    if (target) {
+      target.innerHTML = JSON.stringify(selectedTerms);
     }
   }
 
@@ -201,10 +203,10 @@ class Taxonomy extends Component {
     var panel = target.nextElementSibling;
     target.classList.toggle("active");
 
-    if(target.classList.contains("active")){
+    if (target.classList.contains("active")) {
       panel.style.display = "block";
     }
-    else{
+    else {
       panel.style.display = "none";
     }
   }
@@ -212,25 +214,25 @@ class Taxonomy extends Component {
   getAssignedTaxonomy = () => {
     var assignedTaxo = this.state.assignedTaxo;
 
-    if(!assignedTaxo){
+    if (!assignedTaxo) {
       var target = document.querySelector(`#${this.props.outputFieldId}`);
       try {
         assignedTaxo = JSON.parse(target.innerHTML);
-        this.setState({assignedTaxo: assignedTaxo});
-      } catch (e) {}
+        this.setState({ assignedTaxo: assignedTaxo });
+      } catch (e) { }
     }
   }
 
-  parseAssignedTaxonomy = ( taxoTerms ) => {
+  parseAssignedTaxonomy = (taxoTerms) => {
     var assignedTaxo = this.state.assignedTaxo;
-    if(Array.isArray(assignedTaxo)){
+    if (Array.isArray(assignedTaxo)) {
       let tags = [];
 
-      for(let a=0; a<assignedTaxo.length; a++){
+      for (let a = 0; a < assignedTaxo.length; a++) {
         tags.push(
           <li key={a}>
             {assignedTaxo[a]['label']}
-            <span rel={assignedTaxo[a]['code']} onClick={(e)=>this.removeAssignedTaxonomy(e)}>x</span>
+            <span rel={assignedTaxo[a]['code']} onClick={(e) => this.removeAssignedTaxonomy(e)}>x</span>
           </li>
         );
       }
@@ -244,8 +246,8 @@ class Taxonomy extends Component {
     var taxCode = e.currentTarget.getAttribute('rel');
 
     var newAssignedTaxo = [];
-    for(let i=0; i<assignedTaxo.length; i++){
-      if(assignedTaxo[i]['code'] != taxCode){
+    for (let i = 0; i < assignedTaxo.length; i++) {
+      if (assignedTaxo[i]['code'] != taxCode) {
         newAssignedTaxo.push(
           {
             code: assignedTaxo[i]['code'],
@@ -255,11 +257,11 @@ class Taxonomy extends Component {
       }
     }
     document.querySelector(`#${this.props.outputFieldId}`).innerHTML = JSON.stringify(newAssignedTaxo);
-    this.setState({assignedTaxo: newAssignedTaxo});
+    this.setState({ assignedTaxo: newAssignedTaxo });
   }
 
   render() {
-    let {id, classes, style, className, taxonomyTerms, outputFieldId, termsDisplayText, assignedDisplayText} = this.props;
+    let { id, classes, style, className, taxonomyTerms, outputFieldId, termsDisplayText, assignedDisplayText } = this.props;
 
     this.getAssignedTaxonomy();
 
