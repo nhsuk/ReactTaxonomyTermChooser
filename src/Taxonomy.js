@@ -68,27 +68,44 @@ const styles = (theme) => ({
     }
   },
   tags: {
+    padding: 0,
+    margin: 0,
     '& li': {
-      display: 'inline-block',
+      display: 'inline-flex',
+      flexWrap: 'nowrap',
+      justifyContent: 'flex-start',
+      alignContent: 'center',
+      alignItems: 'stretch',
       margin: '5px 2px',
-      fontSize: '13px',
-      padding: '7px',
+      fontSize: '1em',
+      height: '1.5em',
+      padding: 0,
       listStyle: 'none',
-      textAlign: 'center',
       background: '#fff',
-      color: '#333',
       border: 'solid thin #333',
-      verticalAlign: 'middle',
-      position: 'relative',
-      '& span': {
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        padding: 0,
-        margin: '.5px',
-        lineHeight: '.5em',
+      fontFamily: 'sans-serif',
+      borderRadius: 3,
+      '& span.label': {
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        textAlign: 'center',
+        flex: '1 1 auto',
+        padding: [0, '1em'],
+        whitespace: 'nowrap',
+      },
+      '& span.remove': {
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        textAlign: 'center',
+        flex: '0 1 auto',
+        padding: [0, '0.8em'],
+        margin: 0,
         cursor: 'pointer',
-        fontFamily: 'sans-serif',
+        backgroundColor: '#e4e4e4',
+        borderTopRightRadius: 3,
+        borderBottomRightRadius: 3,
       }
     }
   }
@@ -192,9 +209,9 @@ class Taxonomy extends Component {
 
     this.setState({ assignedTaxo: selectedTerms });
     // var target = document.querySelector(`#${this.props.outputFieldId}`);
-    var target = document.getElementById(this.props.outputFieldId);
-    if (target) {
-      target.innerHTML = JSON.stringify(selectedTerms);
+    var outputFieldElem = document.getElementById(this.props.outputFieldId);
+    if (outputFieldElem) {
+      outputFieldElem.innerHTML = JSON.stringify(selectedTerms);
     }
   }
 
@@ -231,8 +248,8 @@ class Taxonomy extends Component {
       for (let a = 0; a < assignedTaxo.length; a++) {
         tags.push(
           <li key={a}>
-            {assignedTaxo[a]['label']}
-            <span rel={assignedTaxo[a]['code']} onClick={(e) => this.removeAssignedTaxonomy(e)}>x</span>
+            <span class="label">{assignedTaxo[a]['label']}</span>
+            <span class="remove" rel={assignedTaxo[a]['code']} onClick={(e) => this.removeAssignedTaxonomy(e)}>x</span>
           </li>
         );
       }
