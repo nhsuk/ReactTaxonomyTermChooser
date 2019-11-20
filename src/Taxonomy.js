@@ -82,9 +82,14 @@ const styles = (theme) => ({
       padding: 0,
       listStyle: 'none',
       background: '#fff',
-      border: 'solid thin #333',
       fontFamily: 'sans-serif',
-      borderRadius: 3,
+      '&.selected-term': {
+        border: 'solid thin #333',
+        borderRadius: 3,  
+      },
+      '&.message': {
+        fontWeight: 'bold',
+      },
       '& span.label': {
         display: 'flex',
         justifyContent: 'center',
@@ -127,8 +132,8 @@ class Taxonomy extends Component {
   static defaultProps = {
     taxonomyTerms: [],
     outputFieldId: "",
-    termsDisplayText: "Taxonomy terms",
-    assignedDisplayText: "Assigned taxonomies"
+    termsDisplayText: "Choose from the following keywords:",
+    assignedDisplayText: "Selected keywords"
   };
 
   static propTypes = {
@@ -154,11 +159,11 @@ class Taxonomy extends Component {
         type: "checkbox",
         value: value['code'],
         name: value['label'],
-        onChange: (e) => this.handlechecked(e)
+        onChange: (e) => this.handleChecked(e)
       }
       if (assignedTaxo) {
         for (let a = 0; a < assignedTaxo.length; a++) {
-          if (assignedTaxo[a]['code'] == value['code']) {
+          if (assignedTaxo[a]['code'] === value['code']) {
             attr['checked'] = true;
           }
         }
@@ -167,7 +172,7 @@ class Taxonomy extends Component {
       if (Array.isArray(value['children']) && value['children'].length > 0) {
 
         var item = [], clss = 'accordion';
-        if (value['type'] == 'volcabulary') {
+        if (value['type'] === 'volcabulary') {
           item.push(<strong>{value['label']}</strong>);
           item.push(<small>{value['description']}</small>);
         } else {
@@ -198,7 +203,7 @@ class Taxonomy extends Component {
     return taxo;
   }
 
-  handlechecked = (e) => {
+  handleChecked = (e) => {
     const checkboxElem = e.currentTarget;
     var selectedTerms = this.state.assignedTaxo;
     if (checkboxElem.checked) {
@@ -216,15 +221,18 @@ class Taxonomy extends Component {
   }
 
   handleAccordion = (e) => {
-    var target = e.currentTarget;
-    var panel = target.nextElementSibling;
-    target.classList.toggle("active");
+    // Toggle the accordian only if the user didn't click on thecheckbox.
+    if (!e.target.type || e.target.type !== 'checkbox') {
+      var target = e.currentTarget;
+      var panel = target.nextElementSibling;
+      target.classList.toggle("active");
 
-    if (target.classList.contains("active")) {
-      panel.style.display = "block";
-    }
-    else {
-      panel.style.display = "none";
+      if (target.classList.contains("active")) {
+        panel.style.display = "block";
+      }
+      else {
+        panel.style.display = "none";
+      }
     }
   }
 
@@ -242,20 +250,21 @@ class Taxonomy extends Component {
 
   parseAssignedTaxonomy = (taxoTerms) => {
     var assignedTaxo = this.state.assignedTaxo;
+    let tags = [];
+
     if (Array.isArray(assignedTaxo)) {
-      let tags = [];
 
       for (let a = 0; a < assignedTaxo.length; a++) {
         tags.push(
-          <li key={a}>
-            <span class="label">{assignedTaxo[a]['label']}</span>
-            <span class="remove" rel={assignedTaxo[a]['code']} onClick={(e) => this.removeAssignedTaxonomy(e)}>x</span>
+          <li key={a} className="selected-term">
+            <span className="label">{assignedTaxo[a]['label']}</span>
+            <span className="remove" rel={assignedTaxo[a]['code']} onClick={(e) => this.removeAssignedTaxonomy(e)}>x</span>
           </li>
         );
       }
-
-      return tags;
     }
+
+    return tags.length > 0 ? tags : null;
   }
 
   removeAssignedTaxonomy = (e) => {
@@ -285,10 +294,10 @@ class Taxonomy extends Component {
     return (
       <div id={id} ref={this.ref} className={`${classes.root} ${className}`} style={style}>
         {assignedDisplayText}
-        <ul className={classes.tags}>{this.parseAssignedTaxonomy(taxonomyTerms)}</ul>
+        <ul className={classes.tags}>{this.parseAssignedTaxonomy(taxonomyTerms) || <li className="message">No keywords selected</li>}</ul>
 
         {termsDisplayText}
-        {this.parseTerms(taxonomyTerms)}
+        <div className="term-chooser">{this.parseTerms(taxonomyTerms)}</div>
       </div>
     );
   }
