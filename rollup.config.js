@@ -3,7 +3,7 @@ import pkg from "./package.json";
 
 export default [
   {
-    input: "src/Taxonomy.js",
+    input: "./export.js",
     external: []
       .concat(Object.keys(pkg.dependencies))
       .concat(Object.keys(pkg.peerDependencies)),

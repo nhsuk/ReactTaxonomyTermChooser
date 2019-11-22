@@ -4,6 +4,9 @@ import React, { Component } from 'react';
 
 const styles = (theme) => ({
   root: {
+    '& .outputField':{
+      visibility: 'hidden',
+    },
     '& .term': {
       margin: '5px 0',
     },
@@ -191,7 +194,6 @@ class Taxonomy extends Component {
     }
 
     this.setState({ assignedTaxo: selectedTerms });
-    // var target = document.querySelector(`#${this.props.outputFieldId}`);
     var target = document.getElementById(this.props.outputFieldId);
     if (target) {
       target.innerHTML = JSON.stringify(selectedTerms);
@@ -256,7 +258,10 @@ class Taxonomy extends Component {
         )
       }
     }
-    document.querySelector(`#${this.props.outputFieldId}`).innerHTML = JSON.stringify(newAssignedTaxo);
+    var outputField = document.getElementById(this.props.outputFieldId);
+    if (outputField) {
+      outputField.innerHTML = JSON.stringify(newAssignedTaxo);
+    }
     this.setState({ assignedTaxo: newAssignedTaxo });
   }
 
